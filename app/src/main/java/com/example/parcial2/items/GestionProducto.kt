@@ -30,6 +30,10 @@ class GestionProductos : ViewModel() {
         _carrito.removeAll(_carrito.filter { it.id == id })
     }
 
+    fun eliminarProductoPorId(id: Int) {
+        _productos.removeIf { it.id == id }
+    }
+
     fun limpiarCarrito() {
         _carrito.clear()
     }

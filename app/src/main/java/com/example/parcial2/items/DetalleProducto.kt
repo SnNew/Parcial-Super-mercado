@@ -44,11 +44,13 @@ fun DetalleProducto(navController: NavController, gestion: GestionProductos, id:
             Text("Descripción: ${producto.descripcion}")
             Spacer(modifier = Modifier.height(16.dp))
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             Button(onClick = {
-                gestion.agregarAlCarrito(producto)
+                gestion.eliminarProductoPorId(id)
                 navController.popBackStack()
-            }) {
-                Text("Agregar al Carrito")
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)) {
+                Text("Eliminar Producto", color = MaterialTheme.colors.onError)
             }
 
             Spacer(modifier = Modifier.height(8.dp))

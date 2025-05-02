@@ -6,17 +6,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.parcial2.nav.Rutas
+import kotlinx.coroutines.launch
 
 @Composable
 fun CarritoCompras(navController: NavController, gestion: GestionProductos) {
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = { TopAppBar(title = { Text("Carrito de Compras") }, backgroundColor = Color(0xFFEEEEEE)) }
     ) {
         Column(
@@ -48,7 +54,10 @@ fun CarritoCompras(navController: NavController, gestion: GestionProductos) {
                             Spacer(modifier = Modifier.width(8.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(producto.nombre, style = MaterialTheme.typography.h6)
-                                Text("\$${String.format("%.2f", producto.precio)} x $cantidad", style = MaterialTheme.typography.body2)
+                                Text(
+                                    "\$${String.format("%.2f", producto.precio)} x $cantidad",
+                                    style = MaterialTheme.typography.body2
+                                )
                             }
                             IconButton(onClick = {
                                 gestion.eliminarProductoDelCarrito(id)
@@ -65,16 +74,26 @@ fun CarritoCompras(navController: NavController, gestion: GestionProductos) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(onClick = {
-                navController.popBackStack()
-            }) {
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar("¡Compra realizada exitosamente!")
+                }
+                gestion.limpiarCarrito()
+            }, modifier = Modifier.fillMaxWidth()) {
                 Text("Finalizar Compra")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Button(onClick = { navController.popBackStack() }) {
+            Button(onClick = {
+                if (navController.previousBackStackEntry != null) {
+                    navController.popBackStack()
+                } else {
+                    navController.navigate(Rutas.Catalogo.ruta)
+                }
+            }, modifier = Modifier.fillMaxWidth()) {
                 Text("Volver al Catálogo")
             }
+
         }
     }
 }
